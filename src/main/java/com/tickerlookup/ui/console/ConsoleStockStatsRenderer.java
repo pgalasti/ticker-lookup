@@ -9,6 +9,7 @@ public class ConsoleStockStatsRenderer implements StockStatsRenderer {
     public void render(StockData data) {
         String color = data.changePercent() >= 0 ? Constant.ANSI_GREEN : Constant.ANSI_RED;
 
+        System.out.println(data.companyName());
         System.out.printf("%s: %s$%.2f (%.2f%% since open)%s\n", 
             data.symbol(), color, data.currentPrice(), data.changePercent(), Constant.ANSI_RESET);
         

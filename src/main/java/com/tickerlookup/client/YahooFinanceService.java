@@ -66,6 +66,10 @@ public class YahooFinanceService implements StockDataService {
         double changePercent = ((currentPrice - firstPrice) / firstPrice) * 100;
 
         JsonNode meta = result.path("meta");
+        String companyName = meta.path("longName").isMissingNode() ? 
+                             meta.path("shortName").asText("N/A") : 
+                             meta.path("longName").asText();
+
         double openPrice = meta.path("chartPreviousClose").asDouble(firstPrice);
         
         long volume = 0;
@@ -78,7 +82,7 @@ public class YahooFinanceService implements StockDataService {
         String low52 = meta.has("fiftyTwoWeekLow") ? String.format("$%.2f", meta.get("fiftyTwoWeekLow").asDouble()) : "N/A";
 
         return Optional.of(new StockData(
-            symbol.toUpperCase(), currentPrice, changePercent, openPrice, volume, high52, low52, prices, syncedTimestamps
+            symbol.toUpperCase(), companyName, currentPrice, changePercent, openPrice, volume, high52, low52, prices, syncedTimestamps
         ));
     }
 }

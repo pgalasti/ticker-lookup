@@ -4,6 +4,7 @@ import java.util.List;
 
 public record StockData(
     String symbol,
+    String companyName,
     double currentPrice,
     double changePercent,
     double openPrice,
