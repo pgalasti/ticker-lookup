@@ -22,9 +22,9 @@
       <version>4.7.4</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
+      <build>
+          <directory>build</directory>
+          <plugins>      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.5.0</version>

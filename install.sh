@@ -5,7 +5,7 @@ PREFIX="/usr/local"
 BIN_DIR="$PREFIX/bin"
 SHARE_DIR="$PREFIX/share/ticker-lookup"
 JAR_NAME="ticker-lookup-1.0-SNAPSHOT.jar"
-SOURCE_JAR="target/$JAR_NAME"
+SOURCE_JAR="build/$JAR_NAME"
 
 if [ ! -f "$SOURCE_JAR" ]; then
     echo "Error: $SOURCE_JAR not found. Run 'make' first."

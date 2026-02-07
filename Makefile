@@ -5,6 +5,7 @@ build:
 
 clean:
 	mvn clean
+	rm -rf build
 
 install: build
 	./install.sh

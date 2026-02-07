@@ -1,4 +1,4 @@
-target/
+build/
 *.class
 dependency-reduced-pom.xml
 .idea/
