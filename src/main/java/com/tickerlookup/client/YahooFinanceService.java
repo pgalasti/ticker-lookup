@@ -47,12 +47,14 @@ public class YahooFinanceService implements StockDataService {
             if (ts.isNumber()) rawTimestamps.add(ts.asLong());
         }
 
-        JsonNode quote = result.path("indicators").path("quote").get(0).path("close");
+        JsonNode quoteNode = result.path("indicators").path("quote").get(0);
+        JsonNode closeNode = quoteNode.path("close");
+        JsonNode openNode = quoteNode.path("open");
         List<Double> prices = new ArrayList<>();
         List<Long> syncedTimestamps = new ArrayList<>();
-        
-        for (int i = 0; i < quote.size(); i++) {
-            JsonNode price = quote.get(i);
+
+        for (int i = 0; i < closeNode.size(); i++) {
+            JsonNode price = closeNode.get(i);
             if (price.isNumber() && i < rawTimestamps.size()) {
                 prices.add(price.asDouble());
                 syncedTimestamps.add(rawTimestamps.get(i));
@@ -62,15 +64,28 @@ public class YahooFinanceService implements StockDataService {
         if (prices.isEmpty()) return Optional.empty();
 
         double currentPrice = prices.get(prices.size() - 1);
-        double firstPrice = prices.get(0);
-        double changePercent = ((currentPrice - firstPrice) / firstPrice) * 100;
+
+        // Find the first non-null open price from the intraday open array
+        double openPrice = 0;
+        for (JsonNode o : openNode) {
+            if (o.isNumber()) {
+                openPrice = o.asDouble();
+                break;
+            }
+        }
 
         JsonNode meta = result.path("meta");
-        String companyName = meta.path("longName").isMissingNode() ? 
-                             meta.path("shortName").asText("N/A") : 
+        String companyName = meta.path("longName").isMissingNode() ?
+                             meta.path("shortName").asText("N/A") :
                              meta.path("longName").asText();
 
-        double openPrice = meta.path("chartPreviousClose").asDouble(firstPrice);
+        // Fall back to regularMarketOpen from meta if open array was empty
+        if (openPrice == 0) {
+            openPrice = meta.path("regularMarketOpen").asDouble(prices.get(0));
+        }
+
+        double previousClose = meta.path("chartPreviousClose").asDouble(openPrice);
+        double changePercent = ((currentPrice - previousClose) / previousClose) * 100;
         
         long volume = 0;
         JsonNode volumeNode = result.path("indicators").path("quote").get(0).path("volume");
@@ -82,7 +97,7 @@ public class YahooFinanceService implements StockDataService {
         String low52 = meta.has("fiftyTwoWeekLow") ? String.format("$%.2f", meta.get("fiftyTwoWeekLow").asDouble()) : "N/A";
 
         return Optional.of(new StockData(
-            symbol.toUpperCase(), companyName, currentPrice, changePercent, openPrice, volume, high52, low52, prices, syncedTimestamps
+            symbol.toUpperCase(), companyName, currentPrice, changePercent, openPrice, previousClose, volume, high52, low52, prices, syncedTimestamps
         ));
     }
 }

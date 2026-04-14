@@ -8,6 +8,7 @@ public record StockData(
     double currentPrice,
     double changePercent,
     double openPrice,
+    double previousClose,
     long volume,
     String high52,
     String low52,
