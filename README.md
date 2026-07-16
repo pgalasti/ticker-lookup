@@ -56,6 +56,21 @@ tl AAPL
 
 ### Options
 
+- **Time Period:**
+  Choose the chart/statistics window (mutually exclusive; defaults to the current day):
+
+  | Flag    | Window        |
+  | ------- | ------------- |
+  | `-d`    | Current day (default) |
+  | `-5d`   | Last 5 days   |
+  | `-30d`  | Last 30 days  |
+  | `-mtd`  | Month to date |
+  | `-ytd`  | Year to date  |
+
+  ```bash
+  tl AAPL -30d
+  ```
+
 - **Omit the Chart:**
   Use `-sc=no` or `--showChart=no` to display only the statistics.
 

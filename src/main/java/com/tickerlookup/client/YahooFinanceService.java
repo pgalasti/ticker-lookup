@@ -3,6 +3,7 @@ package com.tickerlookup.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tickerlookup.model.StockData;
+import com.tickerlookup.model.TimePeriod;
 import com.tickerlookup.util.Constant;
 
 import java.net.URI;
@@ -18,8 +19,8 @@ public class YahooFinanceService implements StockDataService {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public Optional<StockData> fetchStockData(String symbol) throws Exception {
-        String url = String.format("https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=15m&range=1d", symbol);
+    public Optional<StockData> fetchStockData(String symbol, TimePeriod period) throws Exception {
+        String url = String.format("https://query1.finance.yahoo.com/v8/finance/chart/%s?%s", symbol, period.urlQuery());
         
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

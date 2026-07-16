@@ -1,9 +1,9 @@
 package com.tickerlookup.ui.console;
 
 import com.tickerlookup.model.StockData;
+import com.tickerlookup.model.TimePeriod;
 import com.tickerlookup.util.Constant;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ChartRenderer {
 
-    public void render(StockData data) {
+    public void render(StockData data, TimePeriod period) {
         List<Double> prices = data.prices();
         List<Long> timestamps = data.timestamps();
         
@@ -80,7 +80,7 @@ public class ChartRenderer {
             colors[row][x] = color;
         }
 
-        System.out.println("\nPrice Movement (Last 24h):");
+        System.out.println("\nPrice Movement (" + period.label() + "):");
         for (int i = 0; i < height; i++) {
             double priceAtLevel = max - (i * (max - min) / (height - 1));
             System.out.printf("%8.2f | ", priceAtLevel);
@@ -95,7 +95,7 @@ public class ChartRenderer {
         }
         System.out.println("         +" + "-".repeat(width + 1));
         
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault());
+        DateTimeFormatter timeFormatter = period.axisFormatter();
         String startLabel = timeFormatter.format(Instant.ofEpochSecond(timestamps.get(0)));
         String midLabel = timeFormatter.format(Instant.ofEpochSecond(timestamps.get(timestamps.size() / 2)));
         String endLabel = timeFormatter.format(Instant.ofEpochSecond(timestamps.get(timestamps.size() - 1)));
